@@ -1,0 +1,31 @@
+@startuml
+scale 0.8
+title "Game of Life - Diagramme d'État : SimulationService"
+
+skinparam state {
+    BackgroundColor White
+    BorderColor Black
+}
+
+[*] -> Stopped
+
+state Stopped : entry / notifyObservers(false)
+state Stopped : do / Waiting for start
+
+state Running : entry / startTimer()\nnotifyObservers(true)
+state Running : exit / stopTimer()\nnotifyObservers(false)
+state Running : do / evolution.nextGeneration(grid)\ncallback.run()
+
+Stopped -> Running : start(IGrid, delay, callback)
+Running -> Stopped : stop()
+
+note right of Running
+  Boucle périodique : onTick appelé à chaque intervalle
+  Notification des observateurs à chaque tick
+end note
+
+note left of Stopped
+  État initial : Simulation inactive
+end note
+
+@enduml

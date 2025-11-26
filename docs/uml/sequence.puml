@@ -1,0 +1,54 @@
+@startuml
+scale 0.8
+title "Game of Life - Diagramme de Séquence : Cycle de Simulation"
+
+actor Utilisateur as U
+participant "ConsoleView <<boundary>>" as V
+participant "GameController <<controller>>" as C
+participant "SimulationService <<service>>" as S
+participant "ObservableGrid <<decorator>>" as OG
+participant "Grid <<entity>>" as G
+participant "RulesBasedEvolution <<service>>" as R
+
+U -> V: startSimulation()
+activate V
+
+V -> C: startSimulation(delayMs)
+activate C
+
+C -> S: start(IGrid, delayMs, callback)
+activate S
+
+' --- Evolution des cellules ---
+S -> OG: nextGeneration()
+activate OG
+
+note right of OG
+  ObservableGrid délègue la génération à Grid
+  et notifie les observateurs
+end note
+
+OG -> G: nextGeneration()
+activate G
+
+loop pour chaque cellule
+  G -> R: shouldCellSurvive/countAliveNeighbors/setCell
+  R --> G: résultat
+end
+
+deactivate G
+deactivate OG
+
+' --- Mise à jour de la vue ---
+S -> V: onGridChanged()
+activate V
+V -> OG: getCell(x, y)
+OG --> V: ICell
+V -> V: refreshDisplay()
+deactivate V
+
+deactivate S
+deactivate C
+deactivate V
+
+@enduml

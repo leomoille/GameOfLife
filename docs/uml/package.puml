@@ -1,0 +1,113 @@
+@startuml
+scale 0.8
+title "Game of Life - Diagramme de Packages"
+
+skinparam package {
+    BackgroundColor White
+    BorderColor Black
+}
+
+skinparam node {
+    BackgroundColor White
+    BorderColor Black
+}
+
+' === PACKAGES DOMAIN ===
+package "Domain" {
+  package "Core" {
+    [ICell] <<interface>>
+    [IGrid] <<interface>>
+    [Cell] <<entity>>
+    [Grid] <<entity>>
+  }
+
+  package "Rules" {
+    [IGameRules] <<interface>>
+    [ConwayRules] <<entity>>
+  }
+}
+
+' === PACKAGES APPLICATION ===
+package "Application" {
+  package "Services" {
+    [IGridEvolution] <<interface>>
+    [RulesBasedEvolution] <<service>>
+    [SimulationService] <<service>>
+  }
+
+  package "Controllers" {
+    [GameController] <<controller>>
+  }
+}
+
+' === PACKAGES INFRASTRUCTURE ===
+package "Infrastructure" {
+  package "Observer" {
+    [IGridObserver] <<interface>>
+    [ISimulationObserver] <<interface>>
+    [ObservableGrid] <<decorator>>
+  }
+
+  package "UI" {
+    [ConsoleView] <<boundary>>
+    [UserInputHandler] <<control>>
+  }
+
+  package "Factory" {
+    [GameFactory] <<factory>>
+  }
+}
+
+' === DEPENDANCES ENTRE PACKAGES ===
+Application --> Domain
+Infrastructure --> Application
+Infrastructure --> Domain
+
+' === DEPENDANCES DETAILLEES ===
+[GameController] --> [IGrid]
+[GameController] --> [SimulationService]
+[SimulationService] --> [IGridEvolution]
+[RulesBasedEvolution] --> [IGameRules]
+[ObservableGrid] --> [IGrid]
+[ObservableGrid] --> [IGridObserver] : 0..*
+[ConsoleView] ..> [IGrid]
+[ConsoleView] ..> [GameController]
+[ConsoleView] ..> [IGridObserver] : 0..*
+[ConsoleView] ..> [ISimulationObserver] : 0..*
+[UserInputHandler] ..> [GameController]
+[GameFactory] ..> [GameController]
+[GameFactory] ..> [Grid]
+[GameFactory] ..> [ObservableGrid]
+[GameFactory] ..> [RulesBasedEvolution]
+[GameFactory] ..> [ConwayRules]
+
+' === NOTES EXPLICATIVES ===
+note right of ObservableGrid
+  Pattern Décorateur : ajoute l'observabilité
+  à une implémentation de IGrid
+end note
+
+note right of RulesBasedEvolution
+  Applique les règles du jeu
+end note
+
+note bottom of Domain
+  Couche métier : Domain Layer (Model)
+end note
+
+note bottom of Application
+  Couche applicative : gestion des cas d'utilisation
+end note
+
+note bottom of Infrastructure
+  Couche technique : UI, Observer, Factory
+end note
+
+legend right
+  | Relation | Signification |
+  | --> | Dépendance forte |
+  | ..> | Dépendance indirecte / utilisation |
+  | 0..* | Multiplicité pour collections |
+end legend
+
+@enduml

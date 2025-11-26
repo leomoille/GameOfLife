@@ -1,0 +1,161 @@
+@startuml
+scale 0.8
+title "Game of Life - Diagramme de Classes"
+
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+' === INTERFACES ===
+interface ICell <<interface>> {
+  + isAlive(): boolean
+  + copy(): ICell
+}
+
+interface IGrid <<interface>> {
+  + getWidth(): int
+  + getHeight(): int
+  + getCell(x: int, y: int): ICell
+  + setCell(x: int, y: int, alive: boolean): void
+  + countAliveNeighbors(x: int, y: int): int
+  + copy(): IGrid
+}
+
+interface IGameRules <<interface>> {
+  + shouldCellSurvive(aliveNeighbors: int, isCurrentlyAlive: boolean): boolean
+  + shouldCellBeBorn(aliveNeighbors: int): boolean
+}
+
+interface IGridEvolution <<interface>> {
+  + nextGeneration(grid: IGrid): void
+}
+
+interface IGridObserver <<interface>> {
+  + onGridChanged(): void
+}
+
+interface ISimulationObserver <<interface>> {
+  + onSimulationStateChanged(running: boolean): void
+}
+
+' === CLASSES CONCRETES ===
+class Cell <<entity>> {
+  - alive: boolean
+  + isAlive(): boolean
+  + copy(): ICell
+}
+
+class Grid <<entity>> {
+  - cells: ICell[][]
+  - width: int
+  - height: int
+  + getWidth(): int
+  + getHeight(): int
+  + getCell(x: int, y: int): ICell
+  + setCell(x: int, y: int, alive: boolean): void
+  + countAliveNeighbors(x: int, y: int): int
+  + copy(): IGrid
+}
+
+class ObservableGrid <<decorator>> {
+  - grid: IGrid
+  - observers: List<IGridObserver>
+  + addObserver(observer: IGridObserver): void
+  + removeObserver(observer: IGridObserver): void
+  + getWidth(): int
+  + getHeight(): int
+  + getCell(x: int, y: int): ICell
+  + setCell(x: int, y: int, alive: boolean): void
+  + countAliveNeighbors(x: int, y: int): int
+  + copy(): IGrid
+}
+
+class ConwayRules <<entity>> {
+  + shouldCellSurvive(aliveNeighbors: int, isCurrentlyAlive: boolean): boolean
+  + shouldCellBeBorn(aliveNeighbors: int): boolean
+}
+
+class RulesBasedEvolution <<service>> {
+  - rules: IGameRules
+  + nextGeneration(grid: IGrid): void
+}
+
+class GameController <<controller>> {
+  - grid: IGrid
+  - simulationService: SimulationService
+  - simulationObservers: List<ISimulationObserver>
+  + addSimulationObserver(observer: ISimulationObserver): void
+  + startSimulation(delayMs: int): void
+  + stopSimulation(): void
+  + setCell(x: int, y: int, alive: boolean): void
+  + reset(): void
+}
+
+class SimulationService <<service>> {
+  - evolution: IGridEvolution
+  - isRunning: boolean
+  - timer: Timer
+  + start(grid: IGrid, delayMs: int, onTick: Runnable): void
+  + stop(): void
+  + isRunning(): boolean
+}
+
+class ConsoleView <<boundary>> {
+  - inputHandler: UserInputHandler
+  + setInputHandler(handler: UserInputHandler): void
+  + display(grid: IGrid): void
+  + onGridChanged(): void
+  + onSimulationStateChanged(running: boolean): void
+}
+
+class UserInputHandler <<control>> {
+  + onCellToggle(x: int, y: int): void
+  + onSimulationStart(): void
+  + onSimulationStop(): void
+  + onReset(): void
+}
+
+class GameFactory <<factory>> {
+  + createDefaultGame(width: int, height: int): GameController
+}
+
+' === RELATIONS ===
+Cell .up.|> ICell
+Grid .up.|> IGrid
+ObservableGrid .up.|> IGrid
+ConwayRules .up.|> IGameRules
+RulesBasedEvolution .up.|> IGridEvolution
+ConsoleView .up.|> IGridObserver
+ConsoleView .up.|> ISimulationObserver
+
+GameController *-- "1" IGrid
+GameController *-- "1" SimulationService
+GameController o-- "many" ISimulationObserver
+Grid *-- "many" ICell
+ObservableGrid o-- "many" IGridObserver
+
+SimulationService --> IGridEvolution
+RulesBasedEvolution --> IGameRules
+ConsoleView --> UserInputHandler
+
+ConsoleView ..> IGrid
+ConsoleView ..> GameController
+UserInputHandler ..> GameController
+GameFactory ..> GameController
+GameFactory ..> Grid
+GameFactory ..> ObservableGrid
+GameFactory ..> RulesBasedEvolution
+GameFactory ..> ConwayRules
+
+note right of ObservableGrid
+  Décorateur : ajoute l'observabilité
+  à une implémentation de IGrid
+end note
+
+note right of Cell
+  Pattern Immutable : l'état ne peut
+  être modifié que via copy()
+end note
+@enduml

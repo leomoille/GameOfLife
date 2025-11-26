@@ -1,0 +1,89 @@
+@startuml
+scale 0.8
+title "Diagramme de Composants"
+
+skinparam component {
+    BackgroundColor White
+    BorderColor Black
+}
+
+' === INTERFACES ===
+interface ICell <<interface>>
+interface IGrid <<interface>>
+interface IGameRules <<interface>>
+interface IGridEvolution <<interface>>
+
+' === PACKAGES PAR COUCHE ===
+package "Domain Layer" as Domain {
+    component CellImpl <<entity>>
+    component GridImpl <<entity>>
+    component GameRulesImpl <<entity>>
+}
+
+package "Application Layer" as Application {
+    component GameController <<controller>>
+    component SimulationService <<service>>
+    component RulesBasedEvolution <<service>>
+}
+
+package "Infrastructure Layer" as Infrastructure {
+    component ConsoleView <<boundary>>
+    component ObservableGrid <<decorator>>
+    component UserInputHandler <<control>>
+    component GameFactory <<factory>>
+}
+
+' === DEPENDANCES INTERNES ===
+GameController --> IGrid
+GameController --> IGridEvolution
+SimulationService --> IGridEvolution
+RulesBasedEvolution --> IGameRules
+ObservableGrid --> IGrid
+
+ConsoleView --> GameController
+ConsoleView --> IGridObserver
+ConsoleView --> ISimulationObserver
+UserInputHandler --> GameController
+GameFactory --> GameController
+GameFactory --> GridImpl
+GameFactory --> ObservableGrid
+GameFactory --> RulesBasedEvolution
+GameFactory --> GameRulesImpl
+
+' === DEPENDANCES EXTERNES ===
+package "Java Platform" as Java {
+    component Timer
+    component SystemOut
+}
+
+ObservableGrid ..> Timer
+ConsoleView ..> SystemOut
+
+' === NOTES EXPLICATIVES ===
+note right of Domain
+  Couche métier (Model)
+  Implémente uniquement la logique du jeu
+  Pas de dépendances externes
+end note
+
+note right of Application
+  Couche applicative
+  Gestion des cas d'utilisation
+  Simulation et contrôle
+end note
+
+note right of Infrastructure
+  Couche technique
+  Vue, UI et gestion des entrées
+  ObservableGrid est un décorateur de Grid
+end note
+
+note left of ObservableGrid
+  Pattern Décorateur
+end note
+
+note left of RulesBasedEvolution
+  Applique les règles du jeu
+end note
+
+@enduml
