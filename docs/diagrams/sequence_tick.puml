@@ -1,0 +1,56 @@
+@startuml
+autonumber
+
+actor "Timer/User" as User
+participant "GameEngine" as Engine
+participant "GameModel" as Model
+participant "RuleStrategy" as Rule
+participant "Grid" as Grid
+participant "PropertyChangeSupport" as Support
+participant "GamePanel (View)" as View
+
+User -> Engine: tick()
+activate Engine
+
+Engine -> Model: nextGeneration()
+activate Model
+
+Model -> Grid: createNewGrid()
+activate Grid
+Grid --> Model: newGrid
+deactivate Grid
+
+loop for each x, y
+    Model -> Grid: getAliveNeighbors(x, y)
+    activate Grid
+    Grid --> Model: count
+    deactivate Grid
+
+    Model -> Rule: computeNextState(currentGrid, x, y)
+    activate Rule
+    Rule --> Model: newState
+    deactivate Rule
+
+    Model -> Model: newGrid.setCell(x, y, newState)
+end
+
+Model -> Model: currentGrid = newGrid
+Model -> Model: generation++
+
+Model -> Support: firePropertyChange("grid", oldGrid, newGrid)
+activate Support
+Support -> View: propertyChange(evt)
+activate View
+View -> View: refresh()
+View --> Support
+deactivate View
+Support --> Model
+deactivate Support
+
+Model --> Engine
+deactivate Model
+
+Engine --> User
+deactivate Engine
+
+@enduml

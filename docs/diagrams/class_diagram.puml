@@ -1,0 +1,132 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "com.leomoille.gameoflife" {
+
+    package "model" {
+        interface RuleStrategy {
+            + computeNextState(grid: Grid, x: int, y: int): CellState
+            + getName(): String
+        }
+
+        class ConwayRules implements RuleStrategy {
+            + computeNextState(grid: Grid, x: int, y: int): CellState
+            + getName(): String
+        }
+
+        class HighLifeRules implements RuleStrategy {
+             + computeNextState(grid: Grid, x: int, y: int): CellState
+             + getName(): String
+        }
+
+        enum CellState {
+            ALIVE
+            DEAD
+        }
+
+        class Cell {
+            - state: CellState
+            + isAlive(): boolean
+            + setState(state: CellState)
+        }
+
+        class Grid {
+            - width: int
+            - height: int
+            - cells: Cell[][]
+            + getCell(x: int, y: int): Cell
+            + setCell(x: int, y: int, state: CellState)
+            + getAliveNeighbors(x: int, y: int): int
+            + clear()
+            + randomize(probability: double)
+            + resize(width: int, height: int)
+        }
+
+        class GameModel {
+            - grid: Grid
+            - ruleStrategy: RuleStrategy
+            - generation: int
+            - support: PropertyChangeSupport
+            + nextGeneration()
+            + setRuleStrategy(rule: RuleStrategy)
+            + reset()
+            + addPropertyChangeListener(pcl: PropertyChangeListener)
+            + removePropertyChangeListener(pcl: PropertyChangeListener)
+        }
+
+        class GameEngine {
+            - model: GameModel
+            - isRunning: boolean
+            + start()
+            + stop()
+            + togglePause()
+            + setSpeed(delay: int)
+        }
+
+        GameModel --> Grid
+        GameModel --> RuleStrategy
+        Grid *-- Cell
+        Cell --> CellState
+        GameEngine --> GameModel
+    }
+
+    package "view" {
+        interface GameView {
+            + refresh()
+        }
+
+        class MainFrame extends javax.swing.JFrame implements GameView {
+            - gamePanel: GamePanel
+            - controlPanel: ControlPanel
+            - menuPanel: MenuPanel
+            - cardLayout: CardLayout
+            + showGame(width: int, height: int, rule: RuleStrategy)
+            + showMenu()
+            + refresh()
+        }
+
+        class GamePanel extends javax.swing.JPanel implements java.beans.PropertyChangeListener {
+            - grid: Grid
+            - cellSize: int
+            + setModel(model: GameModel)
+            # paintComponent(g: Graphics)
+        }
+
+        class ControlPanel extends javax.swing.JPanel {
+            - controller: GameController
+        }
+
+        class MenuPanel extends javax.swing.JPanel {
+             - mainFrame: MainFrame
+             + initUI()
+        }
+    }
+
+    package "controller" {
+
+        class GameController {
+            - model: GameModel
+            - engine: GameEngine
+            - view: GameView
+            + startGame()
+            + pauseGame()
+            + resetGame()
+            + changeRule(rule: RuleStrategy)
+            + onResizeGrid(width: int, height: int)
+        }
+    }
+
+    MainFrame *-- GamePanel
+    MainFrame *-- ControlPanel
+    MainFrame *-- MenuPanel
+
+    MenuPanel --> MainFrame : requests switch
+
+
+    GameController --> GameView
+
+    GamePanel ..> GameModel : observes
+    ControlPanel ..> GameModel : observes
+}
+
+@enduml

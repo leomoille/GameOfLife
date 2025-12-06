@@ -1,0 +1,38 @@
+@startuml
+start
+:Tick Triggered;
+:Initialize Next State Grid;
+:Get Grid Dimensions (W, H);
+
+:Reset Coordinates (x=0, y=0);
+
+repeat
+  :Get current Cell at (x,y);
+  :Count Alive Neighbors;
+
+  if (Rule Strategy) then
+    :Apply Survival/Birth Rules;
+  else
+    :Keep State / Default;
+  endif
+
+  :Determine Next Cell State;
+  :Set State in Next Grid at (x,y);
+
+  if (x < W-1) then
+    :x++;
+  else
+    :x=0;
+    if (y < H-1) then
+      :y++;
+    else
+        break
+    endif
+  endif
+repeat while (more cells)
+
+:Swap Current Grid with Next Grid;
+:Increment Generation Counter;
+:Notify Observers (View);
+stop
+@enduml

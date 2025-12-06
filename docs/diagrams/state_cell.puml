@@ -1,0 +1,26 @@
+@startuml
+scale 600 width
+
+skinparam state {
+  BackgroundColor<<Alive>> LightGreen
+  BackgroundColor<<Dead>> LightGray
+}
+
+[*] --> Dead
+
+state Dead <<Dead>>
+state Alive <<Alive>>
+
+' Vertical layout helps prevents label overlap
+Dead --> Alive : Reproduction\n(3 neighbors)
+
+Alive --> Dead : Death\n(Under < 2)\n(Over > 3)
+
+' Self transitions
+Alive -right-> Alive : Survival\n(2 or 3)
+Dead -right-> Dead : No Change
+
+Dead --> [*] : Reset
+Alive --> [*] : Reset
+
+@enduml

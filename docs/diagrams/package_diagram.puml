@@ -1,0 +1,33 @@
+@startuml
+package "com.leomoille.gameoflife" {
+
+    package "model" {
+        [GameModel]
+        [Grid]
+        [Cell]
+        [RuleStrategy]
+    }
+
+    package "view" {
+        [MainFrame]
+
+        [GameView]
+        [GamePanel]
+        [ControlPanel]
+        [MenuPanel]
+    }
+
+    package "controller" {
+        [GameController]
+    }
+
+    package "app" {
+        [Main]
+    }
+}
+
+app ..> view : initializes
+view ..> controller : uses
+controller ..> model : uses
+view ..> model : observes
+@enduml
