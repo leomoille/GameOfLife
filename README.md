@@ -44,8 +44,8 @@ flexible et un respect strict des standards professionnels.
 1. Cloner le dépôt :
 
 ```bash
-git clone https://github.com/your-username/game-of-life.git
-cd game-of-life
+git clone https://github.com/leomoille/GameOfLife.git
+cd GameOfLife
 ```
 
 2. Compiler :
