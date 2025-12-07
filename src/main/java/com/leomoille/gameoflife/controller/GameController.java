@@ -1,0 +1,47 @@
+package com.leomoille.gameoflife.controller;
+
+import com.leomoille.gameoflife.model.GameEngine;
+import com.leomoille.gameoflife.model.GameModel;
+import com.leomoille.gameoflife.model.RuleStrategy;
+import com.leomoille.gameoflife.view.GameView;
+
+public class GameController {
+    private final GameModel model;
+    private final GameEngine engine;
+    private GameView view;
+
+    public GameController(GameModel model, GameEngine engine) {
+        this.model = model;
+        this.engine = engine;
+    }
+
+    public void setView(GameView view) {
+        this.view = view;
+    }
+
+    public void startGame() {
+        this.engine.start();
+    }
+
+    public void pauseGame() {
+        this.engine.togglePause();
+    }
+
+    public void resetGame() {
+        this.engine.stop();
+        this.model.reset();
+    }
+
+    public void changeRule(RuleStrategy rule) {
+        this.model.setRuleStrategy(rule);
+    }
+
+    public void randomize() {
+        // Default 20% probability.
+        this.model.randomize(0.2);
+    }
+
+    public void setSpeed(int delayMs) {
+        this.engine.setSpeed(delayMs);
+    }
+}

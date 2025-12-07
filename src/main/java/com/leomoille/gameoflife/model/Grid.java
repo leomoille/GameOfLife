@@ -1,5 +1,7 @@
 package com.leomoille.gameoflife.model;
 
+import java.util.Random;
+
 /**
  * Represents the 2D grid of cells in the Game of Life.
  * <p>
@@ -10,6 +12,7 @@ public class Grid {
     private final int width;
     private final int height;
     private final Cell[][] cells;
+    private final Random random;
 
     /**
      * Creates a grid with specified dimensions.
@@ -20,6 +23,7 @@ public class Grid {
     public Grid(int width, int height) {
         this.width = width;
         this.height = height;
+        this.random = new Random();
         this.cells = new Cell[height][width];
         initializeCells();
     }
@@ -95,7 +99,27 @@ public class Grid {
         return count;
     }
 
+    public void clear() {
+        for (int y = 0; y < this.height; y++) {
+            for (int x = 0; x < this.width; x++) {
+                this.cells[y][x].setState(CellState.DEAD);
+            }
+        }
+    }
+
     private boolean isValidCoordinate(int x, int y) {
         return x >= 0 && x < this.width && y >= 0 && y < this.height;
+    }
+
+    public void randomize(double probability) {
+        for (int y = 0; y < this.height; y++) {
+            for (int x = 0; x < this.width; x++) {
+                if (this.random.nextDouble() < probability) {
+                    this.cells[y][x].setState(CellState.ALIVE);
+                } else {
+                    this.cells[y][x].setState(CellState.DEAD);
+                }
+            }
+        }
     }
 }

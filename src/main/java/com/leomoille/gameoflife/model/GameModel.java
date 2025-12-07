@@ -27,4 +27,17 @@ public class GameModel {
         this.grid = nextGrid;
         this.generation++;
     }
+
+    public void reset() {
+        this.grid.clear();
+        this.generation = 0;
+    }
+
+    public void setRuleStrategy(RuleStrategy ruleStrategy) {
+        this.ruleStrategy = ruleStrategy;
+    }
+
+    public void randomize(double probability) {
+        this.grid.randomize(probability);
+    }
 }
