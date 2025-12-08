@@ -18,7 +18,7 @@ class RuleStrategyTest {
             "Overpopulation,  false, 4, DEAD"
     })
     void testConwayRules(String description, boolean isAlive, int neighbors, CellState expectedState) {
-        verifyRule(new ConwayRules(), isAlive, neighbors, expectedState);
+        this.verifyRule(new ConwayRules(), isAlive, neighbors, expectedState);
     }
 
     @ParameterizedTest(name = "HighLife: {0} (Alive: {1}, Neighbors: {2}) -> {3}")
@@ -33,7 +33,7 @@ class RuleStrategyTest {
             "Overpopulation,  false, 7, DEAD"
     })
     void testHighLifeRules(String description, boolean isAlive, int neighbors, CellState expectedState) {
-        verifyRule(new HighLifeRules(), isAlive, neighbors, expectedState);
+        this.verifyRule(new HighLifeRules(), isAlive, neighbors, expectedState);
     }
 
     private void verifyRule(RuleStrategy strategy, boolean isAlive, int neighbors, CellState expected) {
@@ -46,7 +46,7 @@ class RuleStrategyTest {
             center.setState(CellState.DEAD);
 
         // Set neighbors
-        setNeighbors(grid, neighbors);
+        this.setNeighbors(grid, neighbors);
 
         assertEquals(expected, strategy.computeNextState(grid, 1, 1));
     }
