@@ -1,6 +1,7 @@
 package com.leomoille.gameoflife.view;
 
 import com.leomoille.gameoflife.controller.GameController;
+import com.leomoille.gameoflife.model.GameModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,10 @@ public class ControlPanel extends JPanel implements PropertyChangeListener {
     public ControlPanel(GameController controller) {
         this.controller = controller;
         this.initUI();
+    }
+
+    public void setModel(GameModel model) {
+        model.addPropertyChangeListener(this);
     }
 
     private void initUI() {

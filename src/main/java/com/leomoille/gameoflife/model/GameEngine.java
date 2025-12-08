@@ -59,4 +59,8 @@ public class GameEngine {
     public void setSpeed(int delayMs) {
         this.delayMs = delayMs;
     }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
 }

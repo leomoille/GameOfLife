@@ -59,4 +59,13 @@ public class GameController {
             this.view.refresh();
         }
     }
+
+    public void onResizeGrid(int width, int height) {
+        boolean wasRunning = engine.isRunning();
+        engine.stop();
+        model.resize(width, height);
+        if (wasRunning) {
+            engine.start();
+        }
+    }
 }
