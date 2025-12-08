@@ -1,14 +1,28 @@
 package com.leomoille.gameoflife.model;
 
+/**
+ * Handles the game loop and simulation timing.
+ * <p>
+ * Runs on a dedicated thread to avoid blocking the Swing Event Dispatch Thread
+ * (EDT).
+ * Controls the speed of the simulation and ensures the model advances
+ * generation by generation.
+ */
 public class GameEngine {
     private final GameModel model;
     private boolean isRunning;
-    private int delayMs;
+    private int delayMs; // Speed of the game generation
     private Thread gameThread;
 
+    /**
+     * Constructs a new GameEngine.
+     *
+     * @param model The GameModel instance to manage.
+     */
     public GameEngine(GameModel model) {
         this.model = model;
         this.isRunning = false;
+        // Default 100ms
         this.delayMs = 100;
     }
 
@@ -23,10 +37,10 @@ public class GameEngine {
             while (this.isRunning) {
                 try {
                     long startTime = System.currentTimeMillis();
-                    model.nextGeneration();
+                    this.model.nextGeneration();
                     long elapsedTime = System.currentTimeMillis() - startTime;
 
-                    long sleepTime = delayMs - elapsedTime;
+                    long sleepTime = this.delayMs - elapsedTime;
                     if (sleepTime > 0) {
                         Thread.sleep(sleepTime);
                     }
@@ -36,23 +50,22 @@ public class GameEngine {
                 }
             }
         });
-        gameThread.start();
+        this.gameThread.start();
     }
 
     public synchronized void stop() {
-        isRunning = false;
-        if (gameThread != null) {
+        this.isRunning = false;
+        if (this.gameThread != null) {
             this.gameThread.interrupt();
-            // Clean up thread
-            this.gameThread = null;
+            this.gameThread = null; // Clean up
         }
     }
 
     public void togglePause() {
-        if (isRunning) {
-            stop();
+        if (this.isRunning) {
+            this.stop();
         } else {
-            start();
+            this.start();
         }
     }
 
@@ -61,6 +74,6 @@ public class GameEngine {
     }
 
     public boolean isRunning() {
-        return isRunning;
+        return this.isRunning;
     }
 }

@@ -1,19 +1,22 @@
 package com.leomoille.gameoflife.model;
 
+/**
+ * Represents a single cell in the grid.
+ */
 public class Cell {
     private CellState state;
 
     /**
-     * Creates a Cell with a specified initial state.
+     * Creates a cell with a specified initial state.
      *
-     * @param initialState Starting state of the cell.
+     * @param initialState The starting state of the cell.
      */
     public Cell(CellState initialState) {
         this.state = initialState;
     }
 
     /**
-     * Default constructor creates DEAD cell.
+     * Default constructor creates a DEAD cell.
      */
     public Cell() {
         this(CellState.DEAD);
@@ -33,6 +36,6 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "Cell{" + "state=" + state + "}";
+        return "Cell{" + "state=" + this.state + '}';
     }
 }

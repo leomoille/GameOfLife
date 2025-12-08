@@ -5,11 +5,12 @@ package com.leomoille.gameoflife.model;
  */
 public interface RuleStrategy {
     /**
+     * Computes the next state of a cell at (x, y) based on the grid context.
      *
      * @param grid The current grid state.
-     * @param x    X coordinate of the cell.
-     * @param y    Y coordinate of the cell.
-     * @return the next state of the cell (ALIVE or DEAD).
+     * @param x    The x-coordinate of the cell.
+     * @param y    The y-coordinate of the cell.
+     * @return The next state of the cell (ALIVE or DEAD).
      */
     CellState computeNextState(Grid grid, int x, int y);
 

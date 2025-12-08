@@ -8,6 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 
+/**
+ * The introductory menu panel.
+ * Allows the user to select the grid size and game rules before starting.
+ */
 public class MenuPanel extends JPanel {
     private final MainFrame mainFrame;
 
@@ -23,6 +27,9 @@ public class MenuPanel extends JPanel {
         this.initUI();
     }
 
+    /**
+     * Initializes the UI components using GridBagLayout.
+     */
     private void initUI() {
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -35,77 +42,77 @@ public class MenuPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        add(titleLabel, gbc);
+        this.add(titleLabel, gbc);
 
         // Rules Selection
         gbc.gridwidth = 1;
         gbc.gridy = 1;
-        add(new JLabel("Rules:"), gbc);
+        this.add(new JLabel("Rules:"), gbc);
 
-        rulesComboBox = new JComboBox<>();
-        rulesComboBox.addItem(new RuleItem(new ConwayRules()));
-        rulesComboBox.addItem(new RuleItem(new HighLifeRules()));
+        this.rulesComboBox = new JComboBox<>();
+        this.rulesComboBox.addItem(new RuleItem(new ConwayRules()));
+        this.rulesComboBox.addItem(new RuleItem(new HighLifeRules()));
         gbc.gridx = 1;
-        add(rulesComboBox, gbc);
+        this.add(this.rulesComboBox, gbc);
 
         // Size Selection
         gbc.gridx = 0;
         gbc.gridy = 2;
-        add(new JLabel("Grid Size:"), gbc);
+        this.add(new JLabel("Grid Size:"), gbc);
 
-        sizeComboBox = new JComboBox<>();
-        sizeComboBox.addItem(new SizeItem("Small (50x50)", 50, 50));
-        sizeComboBox.addItem(new SizeItem("Medium (100x100)", 100, 100));
-        sizeComboBox.addItem(new SizeItem("Large (200x200)", 200, 200));
-        sizeComboBox.addItem(new SizeItem("Custom...", -1, -1)); // Special item
+        this.sizeComboBox = new JComboBox<>();
+        this.sizeComboBox.addItem(new SizeItem("Small (50x50)", 50, 50));
+        this.sizeComboBox.addItem(new SizeItem("Medium (100x100)", 100, 100));
+        this.sizeComboBox.addItem(new SizeItem("Large (200x200)", 200, 200));
+        this.sizeComboBox.addItem(new SizeItem("Custom...", -1, -1)); // Special item
 
-        sizeComboBox.addItemListener(e -> {
+        this.sizeComboBox.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 SizeItem item = (SizeItem) e.getItem();
-                customSizePanel.setVisible(item.width == -1);
-                revalidate(); // Refresh layout
-                repaint();
+                this.customSizePanel.setVisible(item.width == -1);
+                this.revalidate(); // Refresh layout
+                this.repaint();
             }
         });
 
         gbc.gridx = 1;
-        add(sizeComboBox, gbc);
+        this.add(this.sizeComboBox, gbc);
 
         // Custom Size Fields (Hidden by default)
-        customSizePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        widthField = new JTextField("100", 4);
-        heightField = new JTextField("100", 4);
-        customSizePanel.add(new JLabel("W:"));
-        customSizePanel.add(widthField);
-        customSizePanel.add(new JLabel("H:"));
-        customSizePanel.add(heightField);
-        customSizePanel.setVisible(false);
+        this.customSizePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        this.widthField = new JTextField("100", 4);
+        this.heightField = new JTextField("100", 4);
+        this.customSizePanel.add(new JLabel("W:"));
+        this.customSizePanel.add(this.widthField);
+        this.customSizePanel.add(new JLabel("H:"));
+        this.customSizePanel.add(this.heightField);
+        this.customSizePanel.setVisible(false);
 
         gbc.gridx = 1;
         gbc.gridy = 3;
-        add(customSizePanel, gbc);
+        this.add(this.customSizePanel, gbc);
 
         // Start Button
         JButton startButton = new JButton("Start Game");
         startButton.setFont(new Font("SansSerif", Font.BOLD, 18));
-        startButton.addActionListener(e -> startGame());
+        startButton.addActionListener(e -> this.startGame());
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
-        add(startButton, gbc);
+        this.add(startButton, gbc);
 
         // Exit Button
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> System.exit(0));
         gbc.gridy = 5;
-        add(exitButton, gbc);
+        this.add(exitButton, gbc);
     }
 
     private void startGame() {
-        RuleItem selectedRule = (RuleItem) rulesComboBox.getSelectedItem();
-        SizeItem selectedSize = (SizeItem) sizeComboBox.getSelectedItem();
+        RuleItem selectedRule = (RuleItem) this.rulesComboBox.getSelectedItem();
+        SizeItem selectedSize = (SizeItem) this.sizeComboBox.getSelectedItem();
 
         if (selectedRule == null || selectedSize == null)
             return;
@@ -115,8 +122,8 @@ public class MenuPanel extends JPanel {
         if (selectedSize.width == -1) {
             // Custom Size
             try {
-                width = Integer.parseInt(widthField.getText().trim());
-                height = Integer.parseInt(heightField.getText().trim());
+                width = Integer.parseInt(this.widthField.getText().trim());
+                height = Integer.parseInt(this.heightField.getText().trim());
                 if (width <= 0 || height <= 0)
                     throw new NumberFormatException();
             } catch (NumberFormatException e) {
@@ -129,7 +136,7 @@ public class MenuPanel extends JPanel {
             height = selectedSize.height;
         }
 
-        mainFrame.showGame(width, height, selectedRule.strategy);
+        this.mainFrame.showGame(width, height, selectedRule.strategy);
     }
 
     // Helper classes for ComboBox items
@@ -142,7 +149,7 @@ public class MenuPanel extends JPanel {
 
         @Override
         public String toString() {
-            return strategy.getName();
+            return this.strategy.getName();
         }
     }
 
@@ -159,7 +166,7 @@ public class MenuPanel extends JPanel {
 
         @Override
         public String toString() {
-            return name;
+            return this.name;
         }
     }
 }

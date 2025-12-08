@@ -8,6 +8,10 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+/**
+ * Panel containing game controls (Start, Reset, Randomize, Speed).
+ * Observes the GameModel to update generation count.
+ */
 public class ControlPanel extends JPanel implements PropertyChangeListener {
     private final GameController controller;
     private JButton startPauseButton;
@@ -40,31 +44,32 @@ public class ControlPanel extends JPanel implements PropertyChangeListener {
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(e -> {
             this.controller.resetGame();
+            // Reset button state
             this.startPauseButton.setText("Start");
         });
 
         JButton randomButton = new JButton("Randomize");
-        randomButton.addActionListener(e -> controller.randomize());
+        randomButton.addActionListener(e -> this.controller.randomize());
 
         JSlider speedSlider = new JSlider(10, 500, 100);
         speedSlider.setInverted(true); // Lower delay = faster
-        speedSlider.addChangeListener(e -> controller.setSpeed(speedSlider.getValue()));
+        speedSlider.addChangeListener(e -> this.controller.setSpeed(speedSlider.getValue()));
 
-        generationLabel = new JLabel("Gen: 0");
+        this.generationLabel = new JLabel("Gen: 0");
 
-        this.add(startPauseButton);
+        this.add(this.startPauseButton);
         this.add(resetButton);
         this.add(randomButton);
         this.add(new JLabel("Speed:"));
         this.add(speedSlider);
-        this.add(generationLabel);
+        this.add(this.generationLabel);
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if ("generation".equals(evt.getPropertyName())) {
             int gen = (Integer) evt.getNewValue();
-            generationLabel.setText("Gen: " + gen);
+            this.generationLabel.setText("Gen: " + gen);
         }
     }
 }

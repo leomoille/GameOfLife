@@ -1,7 +1,7 @@
 package com.leomoille.gameoflife.model;
 
 /**
- * HighLife Rules (B36/S23)
+ * HighLife Rules (B36/S23).
  * Similar to Conway, but cells also come to life with 6 neighbors.
  * Famous for having a replicator pattern.
  */

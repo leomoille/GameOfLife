@@ -12,6 +12,11 @@ import java.awt.event.MouseWheelEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+/**
+ * Custom Swing component to render the Game of Life grid.
+ * Observes GameModel for updates.
+ * Supports Zoom via Mouse Wheel (Ctrl/Cmd + Scroll).
+ */
 public class GamePanel extends JPanel implements PropertyChangeListener {
     private GameController controller;
     private Grid grid;
@@ -28,16 +33,16 @@ public class GamePanel extends JPanel implements PropertyChangeListener {
         this.controller = controller;
         this.setBackground(Color.BLACK);
 
-        // Manage mouse actions
+        // Handle mouse clicks for cell toggling
         MouseAdapter mouseHandler = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
+                GamePanel.this.handleMouseClick(e);
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                super.mouseDragged(e);
+                GamePanel.this.handleMouseClick(e);
             }
 
             @Override
@@ -48,12 +53,13 @@ public class GamePanel extends JPanel implements PropertyChangeListener {
                 if (e.isControlDown() || e.isMetaDown()) {
                     int rotation = e.getWheelRotation();
                     if (rotation < 0) {
-                        zoomIn();
+                        GamePanel.this.zoomIn();
                     } else {
-                        zoomOut();
+                        GamePanel.this.zoomOut();
                     }
                 } else {
-                    getParent().dispatchEvent(e);
+                    // Propagate to parent (ScrollPane)
+                    GamePanel.this.getParent().dispatchEvent(e);
                 }
             }
         };
@@ -81,6 +87,9 @@ public class GamePanel extends JPanel implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Set the model to observe. Usually called during initialization.
+     */
     public void setModel(GameModel model) {
         this.grid = model.getGrid();
         model.addPropertyChangeListener(this);
@@ -88,7 +97,7 @@ public class GamePanel extends JPanel implements PropertyChangeListener {
     }
 
     private void updatePreferredSize() {
-        if (grid != null) {
+        if (this.grid != null) {
             int width = this.grid.getWidth() * this.cellSize;
             int height = this.grid.getHeight() * this.cellSize;
             this.setPreferredSize(new Dimension(width, height));
@@ -96,7 +105,7 @@ public class GamePanel extends JPanel implements PropertyChangeListener {
     }
 
     private void handleMouseClick(MouseEvent e) {
-        if (grid == null) {
+        if (this.grid == null) {
             return;
         }
 
@@ -108,6 +117,11 @@ public class GamePanel extends JPanel implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Renders the grid.
+     *
+     * @param g The Graphics context.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -145,7 +159,7 @@ public class GamePanel extends JPanel implements PropertyChangeListener {
             }
         }
 
-        if (this.showGridLines && cellSize > 2) {
+        if (this.showGridLines && this.cellSize > 2) {
             g2d.setColor(Color.DARK_GRAY);
             // Draw grid lines only in visible area
             for (int y = startY; y <= endY; y++) {
@@ -155,7 +169,6 @@ public class GamePanel extends JPanel implements PropertyChangeListener {
                 g2d.drawLine(x * this.cellSize, startY * this.cellSize, x * this.cellSize, endY * this.cellSize);
             }
         }
-
     }
 
     @Override

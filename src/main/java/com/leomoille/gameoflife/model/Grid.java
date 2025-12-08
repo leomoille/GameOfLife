@@ -25,14 +25,14 @@ public class Grid {
         this.height = height;
         this.random = new Random();
         this.cells = new Cell[height][width];
-        initializeCells();
+        this.initializeCells();
     }
 
     private void initializeCells() {
         for (int y = 0; y < this.height; y++) {
             for (int x = 0; x < this.width; x++) {
                 // Cell are DEAD by default
-                cells[y][x] = new Cell();
+                this.cells[y][x] = new Cell();
             }
         }
     }
@@ -53,19 +53,19 @@ public class Grid {
      * @return the actual Cell object (not a copy).
      */
     public Cell getCell(int x, int y) {
-        if (isValidCoordinate(x, y)) {
+        if (this.isValidCoordinate(x, y)) {
             // No copy to keep it simple.
-            return cells[y][x];
+            return this.cells[y][x];
         }
         return null;
     }
 
     /**
-     * Sets the state of a Cell via coordinates.
+     * Sets the state of a cell at (x, y).
      */
     public void setCell(int x, int y, CellState state) {
-        if (isValidCoordinate(x, y)) {
-            cells[y][x].setState(state);
+        if (this.isValidCoordinate(x, y)) {
+            this.cells[y][x].setState(state);
         }
     }
 
@@ -82,14 +82,15 @@ public class Grid {
 
         for (int i : dx) {
             for (int j : dy) {
-                if (i == 0 && j == 0)
+                if (i == 0 && j == 0) {
                     continue;
+                }
 
                 int nx = x + i;
                 int ny = y + j;
 
-                if (isValidCoordinate(nx, ny)) {
-                    if (cells[ny][nx].isAlive()) {
+                if (this.isValidCoordinate(nx, ny)) {
+                    if (this.cells[ny][nx].isAlive()) {
                         count++;
                     }
                 }
@@ -105,10 +106,6 @@ public class Grid {
                 this.cells[y][x].setState(CellState.DEAD);
             }
         }
-    }
-
-    private boolean isValidCoordinate(int x, int y) {
-        return x >= 0 && x < this.width && y >= 0 && y < this.height;
     }
 
     public void randomize(double probability) {
@@ -128,7 +125,7 @@ public class Grid {
 
         for (int y = 0; y < newHeight; y++) {
             for (int x = 0; x < newWidth; x++) {
-                // Copy if existing
+                // Copy existing if possible
                 if (y < this.height && x < this.width) {
                     newCells[y][x] = this.cells[y][x];
                 } else {
@@ -140,5 +137,9 @@ public class Grid {
         this.width = newWidth;
         this.height = newHeight;
         this.cells = newCells;
+    }
+
+    private boolean isValidCoordinate(int x, int y) {
+        return x >= 0 && x < this.width && y >= 0 && y < this.height;
     }
 }

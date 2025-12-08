@@ -3,6 +3,11 @@ package com.leomoille.gameoflife.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+/**
+ * The main model class for the Game of Life.
+ * Manages the grid, rules, and game state.
+ * Notifies observers when the grid changes.
+ */
 public class GameModel {
     private Grid grid;
     private RuleStrategy ruleStrategy;
@@ -16,14 +21,17 @@ public class GameModel {
         this.support = new PropertyChangeSupport(this);
     }
 
+    /**
+     * Advances the game by one generation.
+     */
     public void nextGeneration() {
-        int width = grid.getWidth();
-        int height = grid.getHeight();
+        int width = this.grid.getWidth();
+        int height = this.grid.getHeight();
         Grid nextGrid = new Grid(width, height);
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                CellState nextState = ruleStrategy.computeNextState(grid, x, y);
+                CellState nextState = this.ruleStrategy.computeNextState(this.grid, x, y);
                 nextGrid.setCell(x, y, nextState);
             }
         }
@@ -39,24 +47,22 @@ public class GameModel {
     public void reset() {
         this.grid.clear();
         this.generation = 0;
-
         this.support.firePropertyChange("grid", null, this.grid);
         this.support.firePropertyChange("generation", null, 0);
     }
 
-    public void setRuleStrategy(RuleStrategy ruleStrategy) {
-        this.ruleStrategy = ruleStrategy;
-    }
-
     public void randomize(double probability) {
         this.grid.randomize(probability);
-
-        this.support.firePropertyChange("grid", null, grid);
+        this.support.firePropertyChange("grid", null, this.grid);
     }
 
     public void resize(int width, int height) {
         this.grid.resize(width, height);
-        this.support.firePropertyChange("grid", null, grid);
+        this.support.firePropertyChange("grid", null, this.grid);
+    }
+
+    public void setRuleStrategy(RuleStrategy ruleStrategy) {
+        this.ruleStrategy = ruleStrategy;
     }
 
     public Grid getGrid() {

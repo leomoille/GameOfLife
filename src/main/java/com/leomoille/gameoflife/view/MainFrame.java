@@ -7,16 +7,24 @@ import com.leomoille.gameoflife.model.RuleStrategy;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * The main application window (View).
+ * <p>
+ * Uses {@link java.awt.CardLayout} to switch between the Main Menu and the Game
+ * View.
+ * Assembles the {@link MenuPanel}, {@link GamePanel}, and {@link ControlPanel}.
+ */
 public class MainFrame extends JFrame implements GameView {
 
-    private GameModel model;
-    private GameController controller;
+    private final GameModel model;
+    private final GameController controller;
 
     private CardLayout cardLayout;
     private JPanel cardsPanel;
 
     private MenuPanel menuPanel;
-    private JPanel gameContainerPanel; // Holds ScrollPane + Controls
+    // Holds ScrollPane + Controls
+    private JPanel gameContainerPanel;
 
     private static final String MENU_VIEW = "MENU";
     private static final String GAME_VIEW = "GAME";
@@ -24,41 +32,38 @@ public class MainFrame extends JFrame implements GameView {
     public MainFrame(GameController controller, GameModel model) {
         this.controller = controller;
         this.model = model;
-        initUI();
+        this.initUI();
     }
 
     private void initUI() {
-        setTitle("Game of Life - Portfolio Showcase");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setTitle("Game of Life - Portfolio Showcase");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        cardLayout = new CardLayout();
-        cardsPanel = new JPanel(cardLayout);
+        this.cardLayout = new CardLayout();
+        this.cardsPanel = new JPanel(this.cardLayout);
 
         // 1. Menu View
-        menuPanel = new MenuPanel(this);
-        cardsPanel.add(menuPanel, MENU_VIEW);
+        this.menuPanel = new MenuPanel(this);
+        this.cardsPanel.add(this.menuPanel, MENU_VIEW);
 
         // 2. Game View
-        gameContainerPanel = createGameView();
-        cardsPanel.add(gameContainerPanel, GAME_VIEW);
+        this.gameContainerPanel = this.createGameView();
+        this.cardsPanel.add(this.gameContainerPanel, GAME_VIEW);
 
-        this.add(cardsPanel);
+        this.add(this.cardsPanel);
 
         // Start minimal size
         this.setSize(800, 600);
-        setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null);
     }
 
     private JPanel createGameView() {
         JPanel mainPanel = new JPanel(new BorderLayout());
 
         // Game Panel
-        GamePanel gamePanel = new GamePanel(controller);
-        gamePanel.setModel(model);
+        GamePanel gamePanel = new GamePanel(this.controller);
+        gamePanel.setModel(this.model);
 
-        // Centering Wrapper: JPanel with GridBagLayout inside ScrollPane
-        // "La grille devrait être centrée si elle est plus petite que la largeur de
-        // l'écran."
         JPanel wrapperPanel = new JPanel(new GridBagLayout());
         wrapperPanel.setBackground(Color.DARK_GRAY); // Background for empty space
         wrapperPanel.add(gamePanel); // Centered by default in GridBag
@@ -67,18 +72,12 @@ public class MainFrame extends JFrame implements GameView {
         scrollPane.setBorder(null); // Optional: clean look
 
         // Control Panel
-        ControlPanel controlPanel = new ControlPanel(controller);
-        controlPanel.setModel(model);
+        ControlPanel controlPanel = new ControlPanel(this.controller);
+        controlPanel.setModel(this.model);
 
-        // Add "Back to Menu" button to ControlPanel or Toolbar?
-        // Let's add it to ControlPanel or a top bar.
-        // User asked "Retourner au menu".
         JButton backButton = new JButton("Menu");
-        backButton.addActionListener(e -> showMenu());
-        // Hack: adding to ControlPanel isn't clean since ControlPanel is its own class.
-        // Let's put a Top Bar or add to Control Panel via getter?
-        // Or just re-instantiate ControlPanel?
-        // Better: Wrapper for controls.
+        backButton.addActionListener(e -> this.showMenu());
+
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.add(controlPanel, BorderLayout.CENTER);
         bottomPanel.add(backButton, BorderLayout.WEST);
@@ -90,16 +89,16 @@ public class MainFrame extends JFrame implements GameView {
     }
 
     public void showGame(int width, int height, RuleStrategy rule) {
-        controller.pauseGame(); // Safety
-        controller.onResizeGrid(width, height);
-        controller.changeRule(rule);
+        this.controller.pauseGame(); // Safety
+        this.controller.onResizeGrid(width, height);
+        this.controller.changeRule(rule);
 
-        cardLayout.show(cardsPanel, GAME_VIEW);
+        this.cardLayout.show(this.cardsPanel, GAME_VIEW);
     }
 
     public void showMenu() {
-        controller.pauseGame();
-        cardLayout.show(cardsPanel, MENU_VIEW);
+        this.controller.pauseGame();
+        this.cardLayout.show(this.cardsPanel, MENU_VIEW);
     }
 
     @Override
