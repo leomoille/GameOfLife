@@ -1,8 +1,6 @@
 package com.leomoille.gameoflife.controller;
 
-import com.leomoille.gameoflife.model.GameEngine;
-import com.leomoille.gameoflife.model.GameModel;
-import com.leomoille.gameoflife.model.RuleStrategy;
+import com.leomoille.gameoflife.model.*;
 import com.leomoille.gameoflife.view.GameView;
 
 public class GameController {
@@ -43,5 +41,18 @@ public class GameController {
 
     public void setSpeed(int delayMs) {
         this.engine.setSpeed(delayMs);
+    }
+
+    public void onCellClicked(int x, int y) {
+        // Toggle the state of the specific cell
+        Cell cell = model.getGrid().getCell(x, y);
+        if (cell != null) {
+            CellState newState = cell.isAlive() ? CellState.DEAD : CellState.ALIVE;
+            this.model.getGrid().setCell(x, y, newState);
+        }
+
+        if (view != null) {
+            this.view.refresh();
+        }
     }
 }

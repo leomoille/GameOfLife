@@ -9,9 +9,9 @@ import java.util.Random;
  * considered DEAD.
  */
 public class Grid {
-    private final int width;
-    private final int height;
-    private final Cell[][] cells;
+    private int width;
+    private int height;
+    private Cell[][] cells;
     private final Random random;
 
     /**
@@ -121,5 +121,24 @@ public class Grid {
                 }
             }
         }
+    }
+
+    public void resize(int newWidth, int newHeight) {
+        Cell[][] newCells = new Cell[newHeight][newWidth];
+
+        for (int y = 0; y < newHeight; y++) {
+            for (int x = 0; x < newWidth; x++) {
+                // Copy if existing
+                if (y < this.height && x < this.width) {
+                    newCells[y][x] = this.cells[y][x];
+                } else {
+                    newCells[y][x] = new Cell(CellState.DEAD);
+                }
+            }
+        }
+
+        this.width = newWidth;
+        this.height = newHeight;
+        this.cells = newCells;
     }
 }
