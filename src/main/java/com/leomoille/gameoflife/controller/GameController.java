@@ -22,6 +22,10 @@ public class GameController {
     }
 
     public void pauseGame() {
+        this.engine.stop();
+    }
+
+    public void togglePause() {
         this.engine.togglePause();
     }
 
