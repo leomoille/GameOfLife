@@ -36,7 +36,7 @@ public class MainFrame extends JFrame implements GameView {
     }
 
     private void initUI() {
-        this.setTitle("Game of Life - Portfolio Showcase");
+        this.setTitle("Game of Life");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.cardLayout = new CardLayout();
